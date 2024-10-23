@@ -106,7 +106,13 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Aabb.cpp" />
+    <ClCompile Include="Affine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MathUtilityForText.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
@@ -182,6 +188,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Aabb.h" />
+    <ClInclude Include="Affine.h" />
+    <ClInclude Include="MathUtilityForText.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="scene\GameScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
