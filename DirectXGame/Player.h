@@ -2,6 +2,7 @@
 #include <KamataEngine.h>
 using namespace KamataEngine;
 #include"MathUtilityForText.h"
+#include "PlayerBullet.h"
 
 
 
@@ -14,6 +15,10 @@ public:
 
 	void Draw(Camera&camera);
 
+	void Rotate();
+
+	void Attack();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -24,5 +29,8 @@ private:
 
 	//キーボード入力
 	Input* input_ = nullptr;
+
+	//弾
+	PlayerBullet* bullet_ = nullptr;
 
 };

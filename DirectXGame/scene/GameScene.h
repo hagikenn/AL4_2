@@ -2,7 +2,6 @@
 
 #include <KamataEngine.h>
 using namespace KamataEngine;
-
 #include"../Player.h"
 
 /// <summary>
