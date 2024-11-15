@@ -17,3 +17,6 @@ const Vector3 operator*(const Vector3& v, float s);
 Matrix4x4 MakeRotateZMatrix(float radian);
 
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+
+//ベクトル変換
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
