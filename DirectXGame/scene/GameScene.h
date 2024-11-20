@@ -3,6 +3,7 @@
 #include <KamataEngine.h>
 using namespace KamataEngine;
 #include"../Player.h"
+#include"../Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -40,6 +41,7 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	Player* player_ = nullptr;
+	Enemy* enemy_ = nullptr;
 	Model* model_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 

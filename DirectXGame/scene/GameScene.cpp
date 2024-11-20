@@ -10,7 +10,7 @@ GameScene::~GameScene() {
 
 	//自キャラの解放
 	delete player_;
-
+	delete enemy_;
 	delete debugCamera_;
 }
 
@@ -36,6 +36,10 @@ void GameScene::Initialize() {
 	//自キャラの初期化
 	player_->Initialize(model_,textureHandle_);
 
+	// 敵キャラの生成
+	enemy_ = new Enemy();
+	// 敵キャラの初期化
+	enemy_->Initialize(model_, textureHandle_);
 
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -50,6 +54,8 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	//自キャラの更新
 	player_->Update();
+	//敵キャラの更新
+	enemy_->Update();
 
 	debugCamera_->Update();
 
@@ -100,6 +106,9 @@ void GameScene::Draw() {
 
 	//自キャラの描画
 	player_->Draw(camera_);
+	//敵キャラの描画
+	enemy_->Draw(camera_);
+
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>

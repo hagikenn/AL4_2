@@ -8,7 +8,7 @@ Player::~Player() {
 }
 
 void Player::Initialize(Model* model, uint32_t textureHandle) { 
-	assert(model); 
+	assert(model);
 	//引数として受け取ったデータをメンバ変数に記録する
 	model_ = model;
 	textureHandle_ = textureHandle;

@@ -108,6 +108,7 @@
   <ItemGroup>
     <ClCompile Include="Aabb.cpp" />
     <ClCompile Include="Affine.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathUtilityForText.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -193,6 +194,7 @@
   <ItemGroup>
     <ClInclude Include="Aabb.h" />
     <ClInclude Include="Affine.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="MathUtilityForText.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBullet.h" />
