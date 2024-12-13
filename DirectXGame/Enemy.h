@@ -1,9 +1,10 @@
 #pragma once
 #include <KamataEngine.h>
 using namespace KamataEngine;
-#include"MathUtilityForText.h"
 #include"EnemyBullet.h"
 
+//自機クラスの前方宣言
+class Player;
 
 class Enemy {
 public:
@@ -24,6 +25,11 @@ public:
 	/// </summary>
 	void Fire();
 
+	void SetPlayer(Player* player) { player_ = player; }
+
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
+
 	// 弾
 	std::list<EnemyBullet*> bullets_;
 
@@ -42,9 +48,11 @@ private:
 
 	//発射タイマー
 	int32_t firingTimer_ = 0;
-
 	//弾
 	EnemyBullet* bullet_ = nullptr;
+
+	//自キャラ
+	Player* player_ = nullptr;
 
 
 };

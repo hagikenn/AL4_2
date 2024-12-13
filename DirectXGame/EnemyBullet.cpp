@@ -22,7 +22,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 void EnemyBullet::Update() {
 	worldTransform_.UpdateMatrix();
 	// 座標を移動させる（1フレーム分の移動量を足しこむ）
-	worldTransform_.translation_ -= velocity_;
+	worldTransform_.translation_ += velocity_;
 
 	// 時間経過でデス
 	if (--deathTimer_ <= 0) {

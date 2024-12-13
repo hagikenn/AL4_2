@@ -1,4 +1,8 @@
 #include "Enemy.h"
+#include<cassert>
+#include "Player.h"
+#include"MathUtilityForText.h"
+using namespace MathUtility;
 
 Enemy::~Enemy() {
 	for (EnemyBullet* bullet : bullets_) {
@@ -77,6 +81,8 @@ void Enemy::Draw(Camera& camera) {
 }
 
 void Enemy::Fire() {
+	assert(player_);
+	
 	timer++;
 
 	if (timer >= 50.0f) {
@@ -90,12 +96,23 @@ void Enemy::Fire() {
 			delete bullet_;
 			bullet_ = nullptr;
 		}
-		// 弾の速度
+		
+		// 弾の速さ（調整項目）
 		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		// 自キャラのワールド座標を取得する
+		Vector3 targetPos = player_->GetWorldPosition();
+		// 敵キャラのワールド座標を取得する
+		Vector3 basePos = this->GetWorldPosition();
+		// 敵キャラ→自キャラの差分ベクトル
+		Vector3 velocity = targetPos - basePos;
+		// ベクトルの正規化
+		velocity = MathUtilityForText::Normalize(velocity);
+		// ベクトルの長さを、速さに合わせる
+		velocity *= kBulletSpeed;
+
 
 		// 速度ベクトルを自機の向きに合わせて回転させる
-		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+		velocity = MathUtilityForText::TransformNormal(velocity, worldTransform_.matWorld_);
 
 		// 弾を生成し、初期化
 		EnemyBullet* newBullet = new EnemyBullet();
@@ -108,4 +125,12 @@ void Enemy::Fire() {
 
 
 	
+}
+
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
 }
