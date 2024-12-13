@@ -36,3 +36,5 @@ void PlayerBullet::Draw(const Camera& camera) {
 	//モデルの描画
 	model_->Draw(worldTransform_, camera, textureHandle_);
 }
+
+void PlayerBullet::OnCollision() {}

@@ -3,6 +3,7 @@
 using namespace KamataEngine;
 #include"MathUtilityForText.h"
 #include "PlayerBullet.h"
+#include"Enemy.h"
 #include<list>
 
 
@@ -24,6 +25,18 @@ public:
 
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
+
+	Vector3 GetPosition() { return worldTransform_.translation_; }
+
+
+	// 衝突を検出したら呼び出されるコールバック関数
+	void OnCollision(const Enemy* enemy);
+
+	std::list<PlayerBullet*> GetBullet() { return bullets_; }
+
+
+	//弾リストを取得
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 
 private:
 	//ワールド変換データ
