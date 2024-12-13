@@ -22,13 +22,18 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 void Enemy::Approach() {
 
-	// 敵の移動ベクトル
-	Vector3 move = {0.0f, 0.0f, 0.0f};
-	Vector3 speed = {0.0f, 0.0f, 0.0f};
+	// 座標移動（ベクトルの加算）
+	worldTransform_.translation_.z -= 0.1f;
 
-	// 移動
-	worldTransform_.translation_ += speed;
+	// worldTransform_.translation_.x = 1.0f;
 
+	// キャラクターの移動速さ
+	const Vector3 kCharacterSpeed = {0.05f, 0.05f, 0.05f};
+
+
+	// 移動（ベクトルを加算）
+	worldTransform_.translation_ += kCharacterSpeed;
+	// 規定の位置に到達したら離脱
 	if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
 	}
@@ -36,12 +41,15 @@ void Enemy::Approach() {
 
 void Enemy::Leave() {
 
-	// 敵の移動ベクトル
-	/*Vector3 move = {0.0f, 0.0f, 0.0f};
-	Vector3 speed = {0.0f, 0.0f, 0.0f};*/
+	// 座標移動（ベクトルの加算）
+	worldTransform_.translation_.z -= 0.1f;
 
-	// 移動
-	// worldTransform_.translation_ += speed;
+	// worldTransform_.translation_.x = 1.0f;
+
+	// キャラクターの移動速さ
+	const Vector3 kCharacterSpeed = {0.05f, 0.05f, 0.05f};
+	// 移動（ベクトルを加算）
+	worldTransform_.translation_ += kCharacterSpeed;
 }
 
 void Enemy::Fire() {
@@ -117,14 +125,7 @@ void Enemy::Update() {
 		enemyBullet->Update();
 	}
 
-	// 敵の移動速度
-	/*const float kEnemySpeedY = 0.005f;
-	const float kEnemySpeedZ = 0.2f;
-
-	move.y += kEnemySpeedY;
-	move.z -= kEnemySpeedZ;
-
-	worldTransform_.translation_ += move;*/
+	
 
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
