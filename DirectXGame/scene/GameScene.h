@@ -2,11 +2,9 @@
 
 #include <KamataEngine.h>
 using namespace KamataEngine;
-#include"../Player.h"
-#include"../Enemy.h"
-#include"../EnemyBullet.h"
-#include"../PlayerBullet.h"
-
+#include "../Enemy.h"
+#include "../EnemyBullet.h"
+#include "../Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -29,6 +27,43 @@ public: // メンバ関数
 	/// </summary>
 	void Initialize();
 
+	// テクスチャハンドル
+	uint32_t textureHandle_ = 0;
+
+	// 3Dモデルの生成
+	Model* model_ = nullptr;
+
+	// ワールドトランスフォーム
+	WorldTransform worldTransform_;
+
+	// カメラ
+	Camera camera_;
+
+	// 自キャラ
+	Player* player_ = nullptr;
+
+	// 敵
+	Enemy* enemy_ = nullptr;
+
+	// テクスチャハンドル
+	uint32_t enemyTextureHandle_ = 0;
+
+	// 3Dモデルの生成
+	Model* enemyModel_ = nullptr;
+
+	// ワールドトランスフォーム
+	WorldTransform enemyWorldTransform_;
+
+	// カメラ
+	Camera enemyCamera_;
+
+	void CheckAllCollisions();
+
+	// デバッグカメラ
+	bool isDebugCameraActive_ = false;
+
+	DebugCamera* debugCamera_ = nullptr;
+
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
@@ -39,32 +74,10 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// 衝突判定と応答
-	/// </summary>
-	void CheckAllCollisions();
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-	Player* player_ = nullptr;
-	Enemy* enemy_ = nullptr;
-	Model* model_ = nullptr;
-	DebugCamera* debugCamera_ = nullptr;
-
-	// テクスチャハンドル
-	uint32_t textureHandle_ = 0u;
-
-	WorldTransform worldTransform_;
-	
-	//カメラ
-	Camera camera_;
-
-	float inputFloat3[3] = {0, 0, 0};
-
-	//デバックカメラ有効
-	bool isDebugCameraActive_ = false;
 
 	/// <summary>
 	/// ゲームシーン用

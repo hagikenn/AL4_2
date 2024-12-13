@@ -1,14 +1,14 @@
-#include <KamataEngine.h>
-using namespace KamataEngine;
+
 #include "GameScene.h"
+#include "../MathUtilityForText.h"
 #include <cassert>
+using namespace MathUtility;
+
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	//3Dモデルデータの解放
-
-	//自キャラの解放
+	delete model_;
 	delete player_;
 	delete enemy_;
 	delete debugCamera_;
@@ -20,93 +20,151 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	//ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("mario.jpg");
-
-	//3Dモデルデータの生成
-	model_ = Model::Create();
-
-	worldTransform_.Initialize();
-
-	//ビュープロジェクションの初期化
-	camera_.Initialize();
-
-	//自キャラの生成
-	player_ = new Player();
-	//自キャラの初期化
-	player_->Initialize(model_,textureHandle_);
-
-	// 敵キャラの生成
-	enemy_ = new Enemy();
-	// 敵キャラの初期化
-	enemy_->Initialize(model_, textureHandle_);
-	//敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
-
-	//デバックカメラの生成
+	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
-	//軸方向表示を有効にする
+	// 軸方向の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
-	//軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
-	AxisIndicator::GetInstance()->SetTargetCamera(&camera_);
+	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
+	AxisIndicator::GetInstance()->SetTargetCamera(&debugCamera_->GetCamera());
 
+	// ファイル名を指定してテクスチャを読み込む
+	textureHandle_ = TextureManager::Load("mario.jpg");
+	// 3Dモデルの生成
+	model_ = Model::Create();
+
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+	// カメラの初期化
+	camera_.Initialize();
+
+	// 自キャラの生成
+	player_ = new Player();
+	// 自キャラの初期化
+	player_->Initialize(model_, textureHandle_);
+
+	// 敵のテクスチャ
+	enemyTextureHandle_ = TextureManager::Load("enemy.png");
+
+	// 敵のモデル
+	enemyModel_ = Model::Create();
+
+	// 敵のワールドトランスフォームの初期化
+	enemyWorldTransform_.Initialize();
+
+	// 敵のカメラの初期化
+	enemyCamera_.Initialize();
+
+	// 敵キャラの生成
+	enemy_ = new Enemy;
+
+	// 敵キャラの初期化
+	enemy_->Initialize(enemyModel_, enemyTextureHandle_);
+
+	enemy_->SetPlayer(player_);
+}
+
+void GameScene::CheckAllCollisions() {
+
+	// 判定AとBの座標
+	Vector3 posA, posB;
+
+	// 自弾リストの取得
+	const std::list<PlayerBullet*> playerBullets = player_->GetBullets();
+	// 敵弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+
+#pragma region
+	posA = player_->GetWorldPosition();
+	for (EnemyBullet* bullet : enemyBullets) {
+
+		posB = bullet->GetWorldPosition();
+
+		Vector3 subtract = posB - posA;
+
+		float a = Length(subtract);
+
+		if (a < 3.0f) {
+
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+#pragma region
+
+	posA = enemy_->GetWorldPosition();
+	for (PlayerBullet* bullet : playerBullets) {
+
+		posB = bullet->GetWorldPosition();
+
+		Vector3 subtract = posB - posA;
+
+		float a = Length(subtract);
+
+		if (a < 3.0f) {
+
+			enemy_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+#pragma region
+
+	for (PlayerBullet* pBullet : playerBullets) {
+		for (EnemyBullet* eBullet : enemyBullets) {
+
+			posA = pBullet->GetWorldPosition();
+			posB = eBullet->GetWorldPosition();
+
+			Vector3 subtract = posB - posA;
+
+			float a = Length(subtract);
+
+			if (a < 3.0f) {
+				pBullet->OnCollision();
+				eBullet->OnCollision();
+			}
+		}
+	}
+#pragma endregion
 }
 
 void GameScene::Update() {
-	//自キャラの更新
-	player_->Update();
-	//敵キャラの更新
-	enemy_->Update();
 
+	// デバッグカメラの更新
 	debugCamera_->Update();
 
-	#ifdef _DEBUG
-	if (input_->TriggerKey(DIK_0)) {
-		if (isDebugCameraActive_ == true) {
+#ifdef _DEBUG
 
-			isDebugCameraActive_ = false;
-
-		} else {
-			isDebugCameraActive_ = true;
-		}
+	if (input_->TriggerKey(DIK_RETURN)) {
+		isDebugCameraActive_ = !isDebugCameraActive_;
 	}
-	#endif
+
+#endif //  _DEBUG
+
 	if (isDebugCameraActive_) {
-	debugCamera_->Update();
+
+		debugCamera_->Update();
+
 		camera_.matView = debugCamera_->GetCamera().matView;
-	camera_.matProjection = debugCamera_->GetCamera().matProjection;
+		camera_.matProjection = debugCamera_->GetCamera().matProjection;
 		camera_.TransferMatrix();
-	}else {
+	} else {
 		camera_.UpdateMatrix();
 	}
 
-	// 自機の弾が敵に当たったとき
-	std::list<PlayerBullet*> playerBullets = player_->GetBullet();
-	for (PlayerBullet* playerBullet : playerBullets) {
-		Vector3 enemyPosition = enemy_->GetPosition();
-		Vector3 playerBulletPosition = playerBullet->GetPosition();
-		if (abs(playerBulletPosition.x - enemyPosition.x) < 3 && abs(playerBulletPosition.y - enemyPosition.y) < 3 && abs(playerBulletPosition.z - enemyPosition.z) < 3) {
-			player_->OnCollision(enemy_);
-			playerBullet->OnCollision();
-			enemy_->OnCollision(player_);
-			// 仮の生成処理。後で消す
-			
-		}
-	}
+	// 自キャラの更新
+	player_->Update();
 
-	// 敵の弾が自機に当たったとき
-	std::list<EnemyBullet*> enemyBullets = enemy_->GetBullet();
-	for (EnemyBullet* enemyBullet : enemyBullets) {
-		Vector3 playerPosition = player_->GetPosition();
-		Vector3 enemyBulletPosition = enemyBullet->GetPosition();
-		if (abs(enemyBulletPosition.x - playerPosition.x) < 3 && abs(enemyBulletPosition.y - playerPosition.y) < 3 && abs(enemyBulletPosition.z - playerPosition.z) < 3) {
-			 enemy_->OnCollision(player_);
-			enemyBullet->OnCollision();
-			player_->OnCollision(enemy_);
-		}
-	}
+	// 敵キャラの更新
+	enemy_->Update();
 
+	CheckAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -132,14 +190,23 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	//自キャラの描画
-	player_->Draw(camera_);
-	//敵キャラの描画
-	enemy_->Draw(camera_);
-
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	// 3Dモデル描画
+	// model_->Draw(worldTransform_, camera_, textureHandle_);
+
+	// 自キャラの描画
+	if (isDebugCameraActive_ == false) {
+		player_->Draw(camera_);
+	}
+
+	if (isDebugCameraActive_) {
+		model_->Draw(worldTransform_, debugCamera_->GetCamera(), textureHandle_);
+	}
+
+	enemy_->Draw(enemyCamera_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -158,32 +225,3 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
-
-//void GameScene::CheckAllCollisions() {
-//	//判定対象AとBの座標
-//	Vector3 posA, posB;
-//
-//	//自弾リストの取得
-//	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
-//	//敵弾リストの取得
-//	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
-//
-//	#pragma region 自キャラと敵弾の当たり判定
-//	//自キャラの座標
-//	posA = player_->GetWorldPosition();
-//
-//	////自キャラと敵弾全ての当たり判定
-//	//for (EnemyBullet* bullet : enemyBullets) {
-//	//	//敵の座標
-//	//	posB=
-//	//}
-//
-//	#pragma endregion
-//
-//	#pragma region 自弾と敵キャラの当たり判定
-//	#pragma endregion
-//
-//	#pragma region 自弾と敵弾の当たり判定
-//	#pragma endregion
-//
-//}
