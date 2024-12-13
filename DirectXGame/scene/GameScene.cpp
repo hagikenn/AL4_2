@@ -38,6 +38,12 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	camera_.Initialize();
 
+	// 天球
+	modelSkyDome_ = Model::CreateFromOBJ("skyDome", true);
+	skyDome_ = new Skydome();
+	skyDome_->Initialize(modelSkyDome_, &camera_);
+
+
 	// 自キャラの生成
 	player_ = new Player();
 	// 自キャラの初期化
@@ -62,6 +68,7 @@ void GameScene::Initialize() {
 	enemy_->Initialize(enemyModel_, enemyTextureHandle_);
 
 	enemy_->SetPlayer(player_);
+
 }
 
 void GameScene::CheckAllCollisions() {
@@ -139,6 +146,9 @@ void GameScene::Update() {
 	// デバッグカメラの更新
 	debugCamera_->Update();
 
+	skyDome_->Update();
+
+
 #ifdef _DEBUG
 
 	if (input_->TriggerKey(DIK_RETURN)) {
@@ -196,6 +206,9 @@ void GameScene::Draw() {
 
 	// 3Dモデル描画
 	// model_->Draw(worldTransform_, camera_, textureHandle_);
+
+	// 天球
+	skyDome_->Draw(camera_);
 
 	// 自キャラの描画
 	if (isDebugCameraActive_ == false) {

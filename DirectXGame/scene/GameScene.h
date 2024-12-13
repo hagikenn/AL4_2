@@ -5,6 +5,8 @@ using namespace KamataEngine;
 #include "../Enemy.h"
 #include "../EnemyBullet.h"
 #include "../Player.h"
+#include "../Skydome.h"
+
 
 /// <summary>
 /// ゲームシーン
@@ -73,6 +75,10 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	// 天球
+	Skydome* skyDome_ = nullptr;
+	Model* modelSkyDome_ = nullptr;
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
