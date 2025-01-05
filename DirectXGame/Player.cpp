@@ -102,10 +102,10 @@ void Player::Update() {
 
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	ImGui::Begin("Debug1");
+	/*ImGui::Begin("Debug1");
 	ImGui::InputFloat3("Input", &worldTransform_.translation_.x);
 	ImGui::SliderFloat3("Slider", &worldTransform_.translation_.x, 0.0f, 10.0f);
-	ImGui::End();
+	ImGui::End();*/
 
 	// 移動限界座標
 	const float kMoveLimitX = 35.0f;
